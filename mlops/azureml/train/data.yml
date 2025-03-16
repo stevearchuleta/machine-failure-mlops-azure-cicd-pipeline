@@ -1,6 +1,16 @@
+# ========================================================================================
+# AZURE ML DATASET CONFIGURATION FILE
+# ========================================================================================
 $schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
 
-type: uri_file
-name: machine-failure-data
-description: A dataset for predicting machine failures in manufacturing
-path: ../../../data/machine_failure_data.csv
+# ==================================================
+# DATASET TYPE
+# ==================================================
+type: uri_file  # Change to `uri_folder` if referencing a directory
+
+# ==================================================
+# PROJECT-SPECIFIC SETTINGS (CHANGE PER PROJECT)
+# ==================================================
+name: machine-failure-data  # Change per project (e.g., pima-diabetes-data)
+description: A dataset for predicting machine failures in manufacturing  # Update for each dataset
+path: ../../../data/machine_failure_data.csv  # Adjust the path to match each project's dataset

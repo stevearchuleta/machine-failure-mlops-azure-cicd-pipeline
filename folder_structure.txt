@@ -1,0 +1,31 @@
+Folder PATH listing for volume WD_Black SN750 SSD 931GB
+Volume serial number is EE5C-C805
+C:.
+|   config-infra-prod.yml
+|   folder_structure.txt
+|   requirements.txt
+|   
++---.github
+|   \---workflows
+|           deploy-model-training-pipeline-classical.yml
+|           
++---data
+|       machine_failure_data.csv
+|       
++---data-science
+|   +---environment
+|   |       train-conda.yml
+|   |       
+|   \---src
+|           prep.py
+|           register.py
+|           train.py
+|           
+\---mlops
+    \---azureml
+        \---train
+                data.yml
+                newpipeline.yml
+                train-env.yml
+                train.yml
+                
