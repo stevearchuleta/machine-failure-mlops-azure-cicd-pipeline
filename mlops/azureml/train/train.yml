@@ -1,27 +1,46 @@
+# ================================================================
+# TRAINING CONFIGURATION FILE FOR MACHINE FAILURE PREDICTION MODEL
+# ================================================================
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-type: command  # This is correct for trial definitions
-name: train_model
-display_name: train_model
+type: command  # ==== DEFINES TRAINING JOB IN AZURE ML ====
+
+# =========================
+# PROJECT-SPECIFIC SETTINGS
+# =========================
+name: train_machine_failure_model  # ==== UNIQUE COMPONENT NAME ====
+display_name: train_machine_failure_model  # ==== DISPLAY NAME IN AZURE ML ====
+
+# =====================
+# INPUT DATA REFERENCES
+# =====================
 inputs: 
   train_data:
-    type: uri_folder
+    type: uri_folder  # ==== TRAINING DATA LOCATION ====
   test_data:
-    type: uri_folder
-  criterion:
-    type: string
-    default: gini
+    type: uri_folder  # ==== TEST DATA LOCATION ====
   max_depth:
     type: integer
-    default: 5
+    default: 5  # ==== MAXIMUM TREE DEPTH ====
+
+# ====================
+# OUTPUT CONFIGURATION
+# ====================
 outputs:
   model_output:
-    type: mlflow_model
-code: ../../../data-science/src
+    type: mlflow_model  # ==== OUTPUT SAVED AS MLFLOW MODEL ====
+
+# ======================
+# TRAINING JOB EXECUTION
+# ======================
+code: ../../../data-science/src  # ==== LOCATION OF TRAINING SCRIPT ====
 command: >-
   python train.py 
   --train_data ${{inputs.train_data}}
   --test_data ${{inputs.test_data}}
-  --criterion ${{inputs.criterion}}
   --max_depth ${{inputs.max_depth}}
   --model_output ${{outputs.model_output}}
-environment: azureml:machine-failure-train-env@latest
+
+# ==============================
+# TRAINING ENVIRONMENT REFERENCE
+# ==============================
+environment: azureml:machine-failure-train-env@latest  # ==== USES PREDEFINED TRAINING ENVIRONMENT ====
