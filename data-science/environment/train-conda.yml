@@ -1,17 +1,43 @@
+# ==================================================================
+# CONDA ENVIRONMENT FILE FOR TRAINING ML MODELS IN AZURE ML PIPELINE
+# ==================================================================
 channels:
   - defaults
   - anaconda
   - conda-forge
+
 dependencies:
-  - python=3.7.5
+  # =======================
+  # BASE PYTHON ENVIRONMENT
+  # =======================
+  - python=3.8  # UPDATED PYTHON VERSION FOR BETTER COMPATIBILITY
   - pip
+
+  # =============================
+  # DATA PROCESSING AND UTILITIES
+  # =============================
+  - pandas=1.3.3  # UPDATED TO MATCH OTHER PROJECTS
+  - numpy=1.21.2  # UPDATED TO MATCH OTHER PROJECTS
+  - pyarrow=10.0.0  # APACHE ARROW SUPPORT
+  - joblib=1.1.0  # PARALLEL COMPUTING FOR ML TASKS
+  
+  # ==========================
+  # MACHINE LEARNING LIBRARIES
+  # ==========================
+  - scikit-learn=1.0  # UPDATED FROM `0.24.1`
+  - xgboost=1.5.0  # ADDED XGBOOST FOR IMPROVED PERFORMANCE
+  - lightgbm=3.3.1  # ADDED LIGHTGBM FOR EFFICIENT BOOSTING
+
+  # ===================
+  # VISUALIZATION TOOLS
+  # ===================
+  - matplotlib=3.4.3  # STANDARDIZED ACROSS ALL PROJECTS
+
+  # ================================
+  # AZURE MACHINE LEARNING LIBRARIES
+  # ================================
   - pip:
-      - azureml-mlflow==1.38.0
-      - azure-ai-ml==1.0.0
-      - pyarrow==10.0.0
-      - scikit-learn==0.24.1
-      - pandas==1.2.1
-      - joblib==1.0.0
-      - matplotlib==3.3.3
+      - azureml-mlflow==1.38.0  # MLFLOW FOR TRACKING
+      - azure-ai-ml==1.0.0  # AZURE AI ML SDK
       - git+https://github.com/microsoft/AzureML-Observability#subdirectory=aml-obs-client
       - git+https://github.com/microsoft/AzureML-Observability#subdirectory=aml-obs-collector

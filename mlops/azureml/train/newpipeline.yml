@@ -1,80 +1,60 @@
+# ========================================================================================
+# AZURE ML TRAINING PIPELINE CONFIGURATION FILE - MACHINE FAILURE
+# ========================================================================================
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: machine_failure_training_pipeline
-experiment_name: machine-failure-training
-description: Training Pipeline to predict machine failure using Decision Tree classifier
 
+# ==================================================
+# PROJECT-SPECIFIC SETTINGS
+# ==================================================
+display_name: machine_failure_training_pipeline  # ==== UNIQUE PIPELINE NAME FOR MACHINE FAILURE ====
+experiment_name: machine-failure-training  # ==== EXPERIMENT NAME IN AZURE ML ====
+description: Training Pipeline for Machine Failure Prediction  # ==== PIPELINE DESCRIPTION ====
+
+# ==================================================
+# INPUT DATA REFERENCE
+# ==================================================
 inputs:
   input:
-    type: uri_file
-    path: azureml:machine-failure-data@latest
+    type: uri_file  # ==== INPUT DATA TYPE: FILE ====
+    path: azureml:machine-failure-data@latest  # ==== DATASET REFERENCE IN AZURE ML ====
 
+# ==================================================
+# OUTPUT CONFIGURATION
+# ==================================================
 outputs:
-  train_data:
-  test_data:
-  model_info_output_path:
+  train_data:  # ==== TRAINING DATA OUTPUT ====
+  test_data:  # ==== TEST DATA OUTPUT ====
+  model_info_output_path:  # ==== TRAINED MODEL OUTPUT PATH ====
 
+# ==================================================
+# PIPELINE SETTINGS
+# ==================================================
 settings:
-  default_datastore: azureml:workspaceblobstore
-  default_compute: azureml:cpu-cluster
-  continue_on_step_failure: false
+  default_datastore: azureml:workspaceblobstore  # ==== DEFAULT AZURE ML DATASTORE ====
+  default_compute: azureml:cpu-cluster  # ==== COMPUTE CLUSTER FOR PIPELINE EXECUTION ====
+  continue_on_step_failure: false  # ==== HALT EXECUTION IF A STEP FAILS ====
 
+# ==================================================
+# PIPELINE JOBS - PREPROCESSING, TRAINING, MODEL REGISTRATION
+# ==================================================
 jobs:
+
+  # =====================================
+  # PREPROCESSING JOB - DATA PREPARATION
+  # =====================================
   prep_data:
-    name: prep_data
-    display_name: prep-data
-    code: ../../../data-science/src
-    command: >-
+    name: prep_data  # ==== JOB NAME: DATA PREPROCESSING ====
+    display_name: prep-data  # ==== FRIENDLY DISPLAY NAME ====
+    code: ../../../data-science/src  # ==== LOCATION OF SCRIPT FILES ====
+    command: >-  # ==== EXECUTION COMMAND ====
       python prep.py 
       --raw_data ${{inputs.raw_data}} 
       --train_data ${{outputs.train_data}}
       --test_data ${{outputs.test_data}}
-    environment: azureml:machine-failure-train-env@latest
+    environment: azureml:machine-failure-train-env@latest  # ==== SPECIFIED TRAINING ENVIRONMENT ====
     inputs:
-      raw_data: ${{parent.inputs.input}}
+      raw_data: ${{parent.inputs.input}}  # ==== RAW INPUT DATA ====
     outputs:
-      train_data: ${{parent.outputs.train_data}}
-      test_data: ${{parent.outputs.test_data}}
-
-  sweep_step:
-    name: sweep_job
-    display_name: sweep-job
-    type: sweep
-    inputs:
-      train_data: ${{parent.jobs.prep_data.outputs.train_data}}
-      test_data: ${{parent.jobs.prep_data.outputs.test_data}}
-    outputs:
-      model_output:
-        type: mlflow_model
-    sampling_algorithm: random
-    trial: ./train.yml  # Refers to a separate command component
-    search_space:
-      criterion:
-        type: choice
-        values: ["gini", "entropy"]
-      max_depth:
-        type: choice
-        values: [1,3,5,10]
-    objective:
-      goal: maximize
-      primary_metric: Accuracy
-    limits:
-      max_total_trials: 20
-      max_concurrent_trials: 10
-      timeout: 7200
-
-  register_model:
-    name: register_model
-    display_name: register-model
-    code: ../../../data-science/src
-    command: >-
-      python register.py 
-      --model_name ${{inputs.model_name}} 
-      --model_path ${{inputs.model_path}} 
-      --model_info_output_path ${{outputs.model_info_output_path}}
-    environment: azureml:machine-failure-train-env@latest
-    inputs:
-      model_name: "machine_failure_prediction_model"
-      model_path: ${{parent.jobs.sweep_step.outputs.model_output}}
-    outputs:
-      model_info_output_path: ${{parent.outputs.model_info_output_path}}
+      train_data: ${{parent.outputs.train_data}}  # ==== TRAINING DATA OUTPUT ====
+      test_data: ${{parent.outputs.test_data}}  # ==== TEST DATA OUTPUT ====
