@@ -1,0 +1,32 @@
+# ==========================================================
+# PIPELINE CONFIGURATION FILE FOR MACHINE FAILURE PREDICTION
+# ==========================================================
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+# =========================
+# PROJECT-SPECIFIC SETTINGS
+# =========================
+display_name: machine_failure_pipeline
+description: Pipeline for training and evaluating Machine Failure Prediction model
+
+# ====================
+# INPUT DATA REFERENCE
+# ====================
+inputs:
+  input_data:
+    type: uri_file
+    path: azureml:machine-failure-data@latest  # ==== REFERENCE TO DATASET IN AZURE ML ====
+
+# =====================================
+# PIPELINE JOBS - TRAINING & EVALUATION
+# =====================================
+jobs:
+  train_model:
+    type: command
+    component: ../train.yml  # ==== TRAINING COMPONENT ====
+    inputs:
+      train_data: ${{parent.inputs.input_data}}
+      test_data: ${{parent.inputs.input_data}}
+    outputs:
+      model_output: ${{parent.outputs.model_output}}
